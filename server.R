@@ -1,0 +1,75 @@
+# Import R packages needed for the app here:
+library(shiny)
+library(DT)
+library(RColorBrewer)
+
+# Define any Python packages needed for the app here:
+PYTHON_DEPENDENCIES = c('pip', 'numpy', 'pandas', 'matplotlib', 'yfinance')
+
+# Begin app server
+shinyServer(function(input, output) {
+  
+  # ------------------ App virtualenv setup (Do not edit) ------------------- #
+  
+  virtualenv_dir = Sys.getenv('VIRTUALENV_NAME')
+  python_path = Sys.getenv('PYTHON_PATH')
+  
+  # Create virtual env and install dependencies
+  reticulate::virtualenv_create(envname = virtualenv_dir, python = python_path)
+  reticulate::virtualenv_install(virtualenv_dir, packages = PYTHON_DEPENDENCIES, ignore_installed=TRUE)
+  reticulate::use_virtualenv(virtualenv_dir, required = T)
+  
+  # ------------------ App server logic (Edit anything below) --------------- #
+  
+  plot_cols <- brewer.pal(11, 'Spectral')
+  
+  # Import python functions to R
+  reticulate::source_python('python_functions.py')
+  
+  # Test that the Python functions have been imported
+  output$message <- renderText({
+    return(test_string_function(input$str))
+  })
+  
+  # Test that numpy function can be used
+  output$xy <- renderText({
+    z = test_numpy_function(input$x, input$y)
+    return(paste0('x + y = ', z))
+  })
+  
+  # Display info about the system running the code
+  output$sysinfo <- DT::renderDataTable({
+    s = Sys.info()
+    df = data.frame(Info_Field = names(s),
+                    Current_System_Setting = as.character(s))
+    return(datatable(df, rownames = F, selection = 'none',
+                     style = 'bootstrap', filter = 'none', options = list(dom = 't')))
+  })
+  
+  # Display system path to python, python version, RETICULATE_PYTHON, virtualenv root
+  output$pythoninfo <- renderText({
+    rr = reticulate::py_discover_config(use_environment = 'python35_env')
+    paste0('which python: ', Sys.which('python'), '\n',
+           'Python version: ', rr$version, '\n',
+           'RETICULATE_PYTHON: ', Sys.getenv('RETICULATE_PYTHON'), '\n',
+           'virtualenv root: ', reticulate::virtualenv_root())
+  })
+  
+  output$stockdata <- renderPrint({
+    data <- getdata()
+    print(head(data))
+    print(tail(data))
+  })
+  
+  output$stockchart <- renderImage({
+    data <- getdata()
+    stockchart(data, input$symbol, input$graph, input$price)
+    list(src = 'myplot.png')
+  }, deleteFile = FALSE)
+  
+  getdata <- reactive({
+    data <- stockdata(input$symbol, input$dateRange[1], input$dateRange[2],
+                       input$graph, input$price)
+    return(data)
+  })
+})
