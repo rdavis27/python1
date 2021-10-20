@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 
 def stockdata(symbol, start, end, graphtype, pricetype):
   dd = yf.download(symbol, start=start, end=end)
-  #if isinstance(dd, pd.core.frame.DataFrame):
   if ',' in symbol:
     dd = dd[pricetype]
   if (graphtype == 'cumulative % change'):
@@ -15,8 +14,6 @@ def stockdata(symbol, start, end, graphtype, pricetype):
   
 def stockchart(dd, symbol, graphtype, pricetype):
   plt.style.use('ggplot')
-  # if isinstance(dd, np.ndarray):
-  #   dd = pd.Series(dd)
   if ',' not in symbol:
     dd = dd[pricetype]
   dd.plot(figsize=(15,7))
