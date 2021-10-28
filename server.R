@@ -4,7 +4,7 @@ library(DT)
 library(RColorBrewer)
 
 # Define any Python packages needed for the app here:
-PYTHON_DEPENDENCIES = c('pip', 'numpy', 'pandas', 'matplotlib', 'yfinance')
+PYTHON_DEPENDENCIES = c('pip', 'numpy', 'pandas', 'matplotlib', 'yfinance', 'plotly')
 
 # Begin app server
 shinyServer(function(input, output) {
@@ -25,6 +25,7 @@ shinyServer(function(input, output) {
   
   # Import python functions to R
   reticulate::source_python('python_functions.py')
+  reticulate::source_python('AutomatedReports.py') # add for plotly
   
   # Test that the Python functions have been imported
   output$message <- renderText({

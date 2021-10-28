@@ -34,6 +34,8 @@ ui <- fluidPage(
                            withSpinner(imageOutput('stockchart'))),
                   tabPanel('Prices',
                            withSpinner(verbatimTextOutput('stockdata'))),
+                  tabPanel('Plotly',
+                           includeHTML("Crypto_Report.html")),
                   tabPanel('System', 
                            h3('Current system info'),
                            '(These values will change when app is run locally vs on Shinyapps.io)',
