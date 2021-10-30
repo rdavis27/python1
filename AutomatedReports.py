@@ -53,7 +53,7 @@ COINS = ['BTC', 'ETH', 'MKR', 'BCH', 'DOGE']
 rolling_period = 15
 date_time = str(datetime.datetime.now())[0:16].replace(':','-').replace(' ','_') # File Explorer Safe Name
 #with open('Crypto_Report_'+date_time+'.html', 'a') as f:
-with open('Crypto_Report.html', 'a') as f:
+with open('Crypto_Report.html', 'w') as f:
   for coin in COINS:
     df = load_data(coin, API_KEY)
     df = calculate_rsi(df, rolling_period)

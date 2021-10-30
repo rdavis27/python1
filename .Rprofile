@@ -28,5 +28,5 @@ if (Sys.info()[['user']] == 'shiny'){
   ##Sys.setenv(PYTHON_PATH = 'python')
   Sys.setenv(VIRTUALENV_NAME = VIRTUALENV_NAME) # exclude '/' => installs into ~/.virtualenvs/
   # RETICULATE_PYTHON is not required locally, RStudio infers it based on the ~/.virtualenvs path
-  Sys.setenv(RETICULATE_PYTHON = ".venv/Scripts/python.exe")
+  Sys.setenv(RETICULATE_PYTHON = "../.venv/Scripts/python.exe")
 }
